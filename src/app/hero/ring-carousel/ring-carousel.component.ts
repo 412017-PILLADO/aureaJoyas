@@ -196,15 +196,34 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     // - lower roughness for sharper highlights
     // - boost env reflection
     // - DoubleSide because Rhino-exported meshes occasionally have faces
-    //   whose normals point inward, which GPU backface culling drops →
-    //   visible holes / "transparent back" of the ring.
+    //   whose normals point inward (GPU culling drops those → holes).
+    // - Shader injection darkens back-facing fragments so the inside of
+    //   the ring reads as a distinct surface vs the outer design.
     model.traverse((obj: any) => {
-      if (obj.isMesh && obj.material) {
-        obj.material.roughness = 0.15;
-        obj.material.envMapIntensity = 1.6;
-        obj.material.side = THREE.DoubleSide;
-        obj.material.needsUpdate = true;
-      }
+      if (!obj.isMesh || !obj.material) return;
+      const mat = obj.material;
+      mat.roughness = 0.15;
+      mat.envMapIntensity = 1.6;
+      mat.side = THREE.DoubleSide;
+      mat.onBeforeCompile = (shader: any) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <opaque_fragment>',
+          `#ifdef OPAQUE
+diffuseColor.a = 1.0;
+#endif
+
+#ifdef USE_TRANSMISSION
+diffuseColor.a *= material.transmissionAlpha;
+#endif
+
+if (!gl_FrontFacing) {
+  outgoingLight *= 0.45;
+}
+
+gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
+        );
+      };
+      mat.needsUpdate = true;
     });
 
     console.log('[Ring] size:', size, '| scale:', scale, '| pos:', model.position);
