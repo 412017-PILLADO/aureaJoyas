@@ -190,9 +190,18 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     const scale  = maxDim > 0 ? 2 / maxDim : 1;
 
     model.scale.setScalar(scale);
-    // Correct centering AFTER scale: world_center = position + scale*center = 0
-    // → position = -scale * center
     model.position.copy(center).multiplyScalar(-scale);
+
+    // Jewelry-grade material override: lower roughness for sharper highlights
+    // and boost env reflection. The GLB ships with roughness 0.22, which is
+    // OK for a hand-held model but too matte for a hero close-up.
+    model.traverse((obj: any) => {
+      if (obj.isMesh && obj.material) {
+        obj.material.roughness = 0.15;
+        obj.material.envMapIntensity = 1.6;
+        obj.material.needsUpdate = true;
+      }
+    });
 
     console.log('[Ring] size:', size, '| scale:', scale, '| pos:', model.position);
     return model;

@@ -142,7 +142,7 @@ for (const { i, kind } of toProcess) {
   console.log(`  Brep [${i}]: ${extracted}/${brepFaces.count} faces meshed`);
 }
 
-console.log(`Verts: ${allPositions.length / 3}, tris: ${allIndices.length / 3}`);
+console.log(`Pre-weld: ${allPositions.length / 3} verts, ${allIndices.length / 3} tris`);
 console.log(`Normals source: ${allHaveNormals ? 'cached' : 'recomputed (no cached normals found)'}`);
 
 if (allPositions.length === 0) {
@@ -151,33 +151,62 @@ if (allPositions.length === 0) {
   process.exit(2);
 }
 
-// ── Normals: cached or recomputed ───────────────────────────────────────
-let finalNormals;
-if (allHaveNormals) {
-  finalNormals = new Float32Array(allNormals);
-} else {
-  finalNormals = new Float32Array(allPositions.length);
-  for (let i = 0; i < allIndices.length; i += 3) {
-    const ia = allIndices[i] * 3;
-    const ib = allIndices[i + 1] * 3;
-    const ic = allIndices[i + 2] * 3;
-    const ax = allPositions[ia],     ay = allPositions[ia + 1], az = allPositions[ia + 2];
-    const bx = allPositions[ib],     by = allPositions[ib + 1], bz = allPositions[ib + 2];
-    const cx = allPositions[ic],     cy = allPositions[ic + 1], cz = allPositions[ic + 2];
-    const ux = bx - ax, uy = by - ay, uz = bz - az;
-    const vx = cx - ax, vy = cy - ay, vz = cz - az;
-    const nx = uy * vz - uz * vy;
-    const ny = uz * vx - ux * vz;
-    const nz = ux * vy - uy * vx;
-    finalNormals[ia]     += nx; finalNormals[ia + 1] += ny; finalNormals[ia + 2] += nz;
-    finalNormals[ib]     += nx; finalNormals[ib + 1] += ny; finalNormals[ib + 2] += nz;
-    finalNormals[ic]     += nx; finalNormals[ic + 1] += ny; finalNormals[ic + 2] += nz;
+// ── Weld coincident vertices ─────────────────────────────────────────────
+// Rhino tessellates per Brep face, leaving duplicate vertices at shared
+// edges with independent normals. Welding them averages the normals,
+// removing the visible "seams" between faces and giving a smooth read.
+{
+  const SCALE = 1 / 0.0001; // resolution: 0.0001 units
+  const keyMap = new Map();
+  const remap = new Int32Array(allPositions.length / 3);
+  const newPositions = [];
+  const normalSum = []; // [x,y,z] per canonical
+  const normalCount = [];
+
+  for (let i = 0, j = 0; i < allPositions.length; i += 3, j++) {
+    const x = allPositions[i], y = allPositions[i + 1], z = allPositions[i + 2];
+    const k = `${Math.round(x * SCALE)},${Math.round(y * SCALE)},${Math.round(z * SCALE)}`;
+    let canonical = keyMap.get(k);
+    if (canonical === undefined) {
+      canonical = newPositions.length / 3;
+      keyMap.set(k, canonical);
+      newPositions.push(x, y, z);
+      normalSum.push(0, 0, 0);
+      normalCount.push(0);
+    }
+    remap[j] = canonical;
+    normalSum[canonical * 3]     += allNormals[i];
+    normalSum[canonical * 3 + 1] += allNormals[i + 1];
+    normalSum[canonical * 3 + 2] += allNormals[i + 2];
+    normalCount[canonical]++;
   }
-  for (let i = 0; i < finalNormals.length; i += 3) {
-    const len = Math.hypot(finalNormals[i], finalNormals[i + 1], finalNormals[i + 2]) || 1;
-    finalNormals[i] /= len; finalNormals[i + 1] /= len; finalNormals[i + 2] /= len;
+
+  const newIndices = new Array(allIndices.length);
+  for (let i = 0; i < allIndices.length; i++) {
+    newIndices[i] = remap[allIndices[i]];
   }
+
+  const newNormals = new Float32Array(newPositions.length);
+  for (let v = 0; v < normalCount.length; v++) {
+    const nx = normalSum[v * 3];
+    const ny = normalSum[v * 3 + 1];
+    const nz = normalSum[v * 3 + 2];
+    const len = Math.hypot(nx, ny, nz) || 1;
+    newNormals[v * 3]     = nx / len;
+    newNormals[v * 3 + 1] = ny / len;
+    newNormals[v * 3 + 2] = nz / len;
+  }
+
+  allPositions.length = 0; allPositions.push(...newPositions);
+  allIndices.length = 0;   allIndices.push(...newIndices);
+  allNormals.length = 0;   allNormals.push(...newNormals);
+  allHaveNormals = true;   // we re-normalized everything ourselves
 }
+
+console.log(`Post-weld: ${allPositions.length / 3} verts, ${allIndices.length / 3} tris`);
+
+// Normals are already welded + normalized
+const finalNormals = new Float32Array(allNormals);
 
 // ── Build GLB ───────────────────────────────────────────────────────────
 const doc = new Document();
