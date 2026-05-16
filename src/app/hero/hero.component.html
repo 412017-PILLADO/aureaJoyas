@@ -45,10 +45,10 @@
   <p class="hint font-ui" aria-hidden="true">ARRASTRÁ EL ANILLO PARA GIRARLO</p>
 
   <!-- CTA -->
-  <a class="cta font-ui" href="#coleccion">DESCUBRÍ LA COLECCIÓN</a>
+  <a class="cta font-ui" href="#coleccion" (click)="onScrollToCollection($event)">DESCUBRÍ LA COLECCIÓN</a>
 
   <!-- Scroll down indicator -->
-  <a class="scroll-down" href="#coleccion" aria-label="Bajar a la colección">
+  <a class="scroll-down" href="#coleccion" aria-label="Bajar a la colección" (click)="onScrollToCollection($event)">
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
       <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>

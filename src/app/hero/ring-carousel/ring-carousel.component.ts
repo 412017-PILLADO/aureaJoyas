@@ -265,17 +265,7 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
   private onPointerUp = (e: PointerEvent) => {
     if (!this.isDragging) return;
     this.isDragging = false;
-
-    const totalDx = e.clientX - this.pointerDownX;
-    const totalDy = e.clientY - this.pointerDownY;
-
-    // Swipe de cambio solo si el eje horizontal domina
-    if (Math.abs(totalDx) > 60 && Math.abs(totalDx) > Math.abs(totalDy)) {
-      const dir  = totalDx < 0 ? 1 : -1;
-      const next = Math.max(0, Math.min(this.groups.length - 1, this.activeIndex + dir));
-      if (next !== this.activeIndex) this.ringChanged.emit(next);
-    }
-
+    // Drag only rotates the active ring; ring switching is done via the dots.
     this.resumeTimer = setTimeout(() => { this.autoRotate = true; }, 0);
   };
 

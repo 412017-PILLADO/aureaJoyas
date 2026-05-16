@@ -100,8 +100,8 @@ app-ring-carousel {
 /* ── Dots ────────────────────────────────────────────────── */
 .dots {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  gap: 1.25rem;
+  margin-top: 1rem;
   animation: fadeIn 350ms ease 950ms both;
   animation-play-state: paused;
 }
@@ -111,8 +111,9 @@ app-ring-carousel {
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  position: relative;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: none;
   background: var(--color-cobalt-35);
@@ -121,9 +122,16 @@ app-ring-carousel {
   padding: 0;
 }
 
+/* Bigger hit target without changing the visual */
+.dot::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+
 .dot--active {
   background: var(--color-cobalt);
-  transform: scale(1.4);
+  transform: scale(1.45);
 }
 
 /* ── Hint ────────────────────────────────────────────────── */

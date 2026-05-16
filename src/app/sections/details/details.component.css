@@ -17,6 +17,9 @@
   .container {
     grid-template-columns: 1fr 1fr;
   }
+  /* On desktop: photo on the LEFT, text on the RIGHT */
+  .decor { order: 0; }
+  .copy  { order: 1; }
 }
 
 /* ── Copy ── */
@@ -72,8 +75,8 @@
   /* Bleed the whole area to viewport left edge */
   margin-left: calc(-1 * var(--section-padding-x));
   width: calc(100% + var(--section-padding-x));
-  /* Height defines the visible area */
-  height: clamp(300px, 70vw, 480px);
+  /* Height defines the visible area — bigger than before */
+  height: clamp(360px, 84vw, 560px);
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 700ms var(--ease-out-expo) 280ms,
@@ -82,10 +85,7 @@
 
 @media (min-width: 768px) {
   .decor {
-    height: clamp(380px, 36vw, 540px);
-    /* Keep the bleed past the section padding so it still touches viewport edge */
-    margin-left: calc(-1 * var(--section-padding-x));
-    width: calc(100% + var(--section-padding-x));
+    height: clamp(440px, 42vw, 620px);
   }
 }
 
@@ -114,7 +114,7 @@
   transform: translateY(-50%);
   height: 100%;
   width: auto;
-  max-width: 78%;
+  max-width: 88%;
   object-fit: contain;
   object-position: left center;
   display: block;
