@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 
-interface IgPost {
-  id: number;
-  url: string;
-  caption: string;
+declare global {
+  interface Window {
+    instgrm?: { Embeds: { process: () => void } };
+  }
 }
 
 @Component({
@@ -13,16 +13,28 @@ interface IgPost {
   templateUrl: './instagram.component.html',
   styleUrl: './instagram.component.css',
 })
-export class InstagramComponent {
-  readonly handle = 'aureaterrajoyas';
+export class InstagramComponent implements AfterViewInit {
+  readonly handle = 'aureaterrajoyas_';
   readonly profileUrl = `https://instagram.com/${this.handle}`;
 
-  readonly posts: IgPost[] = [
-    { id: 1, url: this.profileUrl, caption: 'Anillo Mar de Oro' },
-    { id: 2, url: this.profileUrl, caption: 'Collar Lluvia de Sal' },
-    { id: 3, url: this.profileUrl, caption: 'Aro Órbita' },
-    { id: 4, url: this.profileUrl, caption: 'Anillo Duna' },
-    { id: 5, url: this.profileUrl, caption: 'Collar Noche Clara' },
-    { id: 6, url: this.profileUrl, caption: 'Pulsera Eco' },
+  // Replace each entry with the real permalink of the post you want to show.
+  // Six duplicates of the same post for now to preview the layout.
+  readonly permalinks: string[] = [
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
+    'https://www.instagram.com/p/DYSwpOzEZnw/',
   ];
+
+  embedUrl(permalink: string): string {
+    return `${permalink}?utm_source=ig_embed&utm_campaign=loading`;
+  }
+
+  ngAfterViewInit(): void {
+    // Trigger embed.js to render the blockquotes added by Angular.
+    // Safe to call even if the script hasn't loaded yet — it auto-runs on load.
+    setTimeout(() => window.instgrm?.Embeds.process(), 0);
+  }
 }

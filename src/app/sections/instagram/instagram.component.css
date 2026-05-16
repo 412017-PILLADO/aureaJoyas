@@ -37,76 +37,35 @@
   max-width: var(--container-max);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(8px, 1.5vw, 16px);
+  grid-template-columns: 1fr;
+  gap: 20px;
+  justify-items: center;
 }
 
-@media (min-width: 720px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* ── Tile ── */
-.tile {
-  position: relative;
-  display: block;
-  aspect-ratio: 1;
-  border-radius: 2px;
-  overflow: hidden;
-  text-decoration: none;
-  background: linear-gradient(160deg, var(--color-cobalt) 0%, #0F1654 100%);
-  box-shadow: 0 12px 28px rgba(30, 42, 140, 0.12);
-  opacity: 0;
-  transform: translateY(14px);
-  transition:
-    opacity 600ms var(--ease-out-expo),
-    transform 600ms var(--ease-out-expo);
-  transition-delay: calc(var(--i, 0) * 60ms);
-}
-
-.ig.is-visible .tile {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.tile-media {
-  position: absolute;
-  inset: 0;
-}
-
-.tile-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transition: transform var(--dur-component) var(--ease-out-expo);
-}
-
-.tile-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-offwhite);
-  background: rgba(10, 10, 20, 0);
-  opacity: 0;
-  transition: background var(--dur-component) var(--ease-out-expo),
-              opacity var(--dur-component) var(--ease-out-expo);
-}
-
-@media (hover: hover) {
-  .tile:hover .tile-svg {
-    transform: scale(1.05);
+@media (min-width: 760px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(326px, 1fr));
+    gap: 24px;
   }
-  .tile:hover .tile-overlay {
-    background: rgba(10, 10, 20, 0.35);
-    opacity: 1;
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(326px, 1fr));
   }
+}
+
+/* IG blockquotes already carry their own styles + min/max-width.
+   We just make sure they fit the grid cell cleanly. */
+.grid .instagram-media {
+  width: 100% !important;
+  margin: 0 !important;
 }
 
 /* ── Follow CTA ── */
 .follow {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -123,21 +82,8 @@
               gap var(--dur-component) var(--ease-out-expo);
 }
 
-.follow {
-  display: flex;
-  width: fit-content;
-}
-
 .follow:hover {
   background: var(--color-cobalt);
   color: var(--color-offwhite);
   gap: 14px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tile {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }
