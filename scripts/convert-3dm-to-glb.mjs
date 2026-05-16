@@ -197,10 +197,14 @@ if (allPositions.length === 0) {
     newNormals[v * 3 + 2] = nz / len;
   }
 
-  allPositions.length = 0; allPositions.push(...newPositions);
-  allIndices.length = 0;   allIndices.push(...newIndices);
-  allNormals.length = 0;   allNormals.push(...newNormals);
-  allHaveNormals = true;   // we re-normalized everything ourselves
+  // Replace contents without spread (spread overflows on large arrays)
+  allPositions.length = 0;
+  for (let i = 0; i < newPositions.length; i++) allPositions.push(newPositions[i]);
+  allIndices.length = 0;
+  for (let i = 0; i < newIndices.length; i++) allIndices.push(newIndices[i]);
+  allNormals.length = 0;
+  for (let i = 0; i < newNormals.length; i++) allNormals.push(newNormals[i]);
+  allHaveNormals = true;
 }
 
 console.log(`Post-weld: ${allPositions.length / 3} verts, ${allIndices.length / 3} tris`);
