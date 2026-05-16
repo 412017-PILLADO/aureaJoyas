@@ -199,10 +199,12 @@ const indices = doc.createAccessor()
   .setArray(useUint32 ? new Uint32Array(allIndices) : new Uint16Array(allIndices))
   .setBuffer(buf);
 
+// glTF baseColorFactor is in LINEAR space, not sRGB.
+// Brand gold #DFB874 (sRGB 0.874, 0.722, 0.455) → linear ≈ (0.741, 0.488, 0.176)
 const material = doc.createMaterial('Gold')
-  .setBaseColorFactor([0.91, 0.76, 0.45, 1])
+  .setBaseColorFactor([0.741, 0.488, 0.176, 1])
   .setMetallicFactor(1)
-  .setRoughnessFactor(0.18);
+  .setRoughnessFactor(0.22);
 
 const primitive = doc.createPrimitive()
   .setAttribute('POSITION', positions)

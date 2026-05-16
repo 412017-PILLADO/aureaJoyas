@@ -9,6 +9,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Inter:wght@400;500&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+  <script>
+    // Always boot at the top of the page, regardless of browser scroll cache.
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.addEventListener('load', function () {
+      window.scrollTo(0, 0);
+    });
+  </script>
 </head>
 <body>
   <app-root></app-root>
