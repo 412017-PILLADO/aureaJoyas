@@ -1,1 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-cobalt:    #1E2A8C;
+  --color-offwhite:  #FAFAF7;
+  --color-gold:      #DFB874;
+  --color-ink:       #0A0A14;
+  --color-cobalt-65: rgba(30, 42, 140, 0.65);
+  --color-cobalt-35: rgba(30, 42, 140, 0.35);
+  --color-offwhite-80: rgba(250, 250, 247, 0.8);
+  --color-offwhite-60: rgba(250, 250, 247, 0.6);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --dur-micro:     150ms;
+  --dur-component: 450ms;
+  --dur-section:   650ms;
+
+  --section-padding-y: clamp(40px, 7vw, 80px);
+  --section-padding-x: clamp(20px, 5vw, 48px);
+  --container-max: 1200px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--color-offwhite);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* Sections sit above the starfield */
+app-hero,
+app-details,
+app-collection,
+app-instagram,
+app-how-to-buy,
+app-contact {
+  position: relative;
+  z-index: 1;
+}
+
+.font-display { font-family: 'Playfair Display', serif; font-weight: 500; }
+.font-script  { font-family: 'Allura', cursive; font-weight: 400; }
+.font-ui      { font-family: 'Inter', sans-serif; }
+
+[scrollReveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms var(--ease-out-expo), transform 600ms var(--ease-out-expo);
+}
+[scrollReveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [scrollReveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

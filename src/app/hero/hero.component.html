@@ -1,0 +1,57 @@
+<section class="hero" [class.hero--ready]="ready">
+
+  <!-- Título cinético -->
+  <h1 class="hero-title" aria-label="AUREA TERRA">
+    <div class="title-line">
+      @for (letter of aureaLetters; track $index) {
+        <span class="letter font-display"
+              [style.animation-delay]="($index * 50 + 50) + 'ms'">{{ letter }}</span>
+      }
+    </div>
+    <div class="title-line">
+      @for (letter of terraLetters; track $index) {
+        <span class="letter font-display"
+              [style.animation-delay]="($index * 50 + 300) + 'ms'">{{ letter }}</span>
+      }
+    </div>
+  </h1>
+
+  <!-- Script -->
+  <p class="hero-script font-script" aria-hidden="true">joyas</p>
+
+  <!-- Carrusel 3D -->
+  <app-ring-carousel
+    [activeIndex]="activeRing"
+    (ringChanged)="onRingChanged($event)"
+  />
+
+  <!-- Label modelo -->
+  <p class="ring-label font-ui">{{ ringLabels[activeRing] }}</p>
+
+  <!-- Dots -->
+  <div class="dots" role="tablist" aria-label="Seleccionar anillo">
+    @for (label of ringLabels; track $index) {
+      <button class="dot"
+              [class.dot--active]="$index === activeRing"
+              (click)="onRingChanged($index)"
+              role="tab"
+              [attr.aria-selected]="$index === activeRing"
+              [attr.aria-label]="label">
+      </button>
+    }
+  </div>
+
+  <!-- Hint -->
+  <p class="hint font-ui" aria-hidden="true">ARRASTRÁ EL ANILLO PARA GIRARLO</p>
+
+  <!-- CTA -->
+  <a class="cta font-ui" href="#coleccion">DESCUBRÍ LA COLECCIÓN</a>
+
+  <!-- Scroll down indicator -->
+  <a class="scroll-down" href="#coleccion" aria-label="Bajar a la colección">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+</section>

@@ -1,0 +1,201 @@
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes letterDrop {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scriptIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.75; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  padding: clamp(0.75rem, 2vh, 1.75rem) 1.25rem 1.5rem;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* ── Título ──────────────────────────────────────────────── */
+.hero-title {
+  margin-top: 0;
+  text-align: center;
+  line-height: 1;
+  letter-spacing: 0.18em;
+}
+
+.title-line {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.letter {
+  display: inline-block;
+  font-size: clamp(2.8rem, 12vw, 5rem);
+  color: var(--color-ink);
+  animation: letterDrop 400ms var(--ease-out-expo) both;
+  animation-play-state: paused;
+}
+
+.hero--ready .letter {
+  animation-play-state: running;
+}
+
+/* ── Script ──────────────────────────────────────────────── */
+.hero-script {
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  color: var(--color-cobalt);
+  margin-top: 0.25rem;
+  animation: scriptIn 450ms var(--ease-out-expo) 650ms both;
+  animation-play-state: paused;
+}
+
+.hero--ready .hero-script {
+  animation-play-state: running;
+}
+
+/* ── Carrusel ────────────────────────────────────────────── */
+app-ring-carousel {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin-top: 1rem;
+  animation: fadeIn 400ms ease 800ms both;
+  animation-play-state: paused;
+}
+
+.hero--ready app-ring-carousel {
+  animation-play-state: running;
+}
+
+/* ── Ring label ──────────────────────────────────────────── */
+.ring-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: var(--color-cobalt);
+  margin-top: 0.5rem;
+  font-weight: 500;
+  min-height: 1em;
+}
+
+/* ── Dots ────────────────────────────────────────────────── */
+.dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  animation: fadeIn 350ms ease 950ms both;
+  animation-play-state: paused;
+}
+
+.hero--ready .dots {
+  animation-play-state: running;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-cobalt-35);
+  cursor: pointer;
+  transition: background var(--dur-micro) ease, transform var(--dur-micro) ease;
+  padding: 0;
+}
+
+.dot--active {
+  background: var(--color-cobalt);
+  transform: scale(1.4);
+}
+
+/* ── Hint ────────────────────────────────────────────────── */
+.hint {
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  color: var(--color-ink);
+  margin-top: 1rem;
+  animation: hintPulse 3s ease-in-out 1s infinite;
+  animation-play-state: paused;
+}
+
+.hero--ready .hint {
+  animation-play-state: running;
+}
+
+/* ── CTA ─────────────────────────────────────────────────── */
+.cta {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  border: 1px solid var(--color-ink);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  transition: background var(--dur-component) ease, color var(--dur-component) ease;
+  animation: fadeIn 350ms ease 1150ms both;
+  animation-play-state: paused;
+}
+
+.hero--ready .cta {
+  animation-play-state: running;
+}
+
+.cta:hover {
+  background: var(--color-ink);
+  color: var(--color-offwhite);
+}
+
+/* ── Scroll-down indicator ───────────────────────────────── */
+.scroll-down {
+  margin-top: 1.25rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-cobalt);
+  opacity: 0;
+  animation:
+    fadeIn 450ms var(--ease-out-expo) 1400ms forwards,
+    scrollBounce 1.8s ease-in-out 1850ms infinite;
+  animation-play-state: paused, paused;
+}
+
+.hero--ready .scroll-down {
+  animation-play-state: running, running;
+}
+
+.scroll-down svg {
+  display: block;
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .letter    { animation: none; opacity: 1; transform: none; }
+  .hero-script,
+  app-ring-carousel,
+  .dots,
+  .cta,
+  .scroll-down { animation: none; opacity: 1; }
+  .hint        { animation: none; opacity: 0.5; }
+}

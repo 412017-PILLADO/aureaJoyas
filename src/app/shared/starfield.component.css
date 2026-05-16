@@ -1,0 +1,36 @@
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  display: inline-block;
+  color: var(--color-cobalt);
+  user-select: none;
+  opacity: 0.4;
+  animation:
+    starfield-pulse var(--dur, 2.8s) ease-in-out var(--delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes starfield-pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.85) translateY(0);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15) translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star {
+    animation: none;
+    opacity: 0.45;
+  }
+}

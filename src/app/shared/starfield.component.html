@@ -1,0 +1,5 @@
+<div class="starfield" aria-hidden="true">
+  @for (star of stars; track $index) {
+    <span class="star" [style]="star.style">{{ star.char }}</span>
+  }
+</div>

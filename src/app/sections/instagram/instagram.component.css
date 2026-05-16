@@ -1,0 +1,143 @@
+.ig {
+  padding: var(--section-padding-y) var(--section-padding-x);
+}
+
+.header {
+  max-width: var(--container-max);
+  margin: 0 auto clamp(28px, 4vw, 40px);
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-cobalt-65);
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: clamp(28px, 4.5vw, 40px);
+  line-height: 1.1;
+  color: var(--color-cobalt);
+  margin-bottom: 12px;
+  letter-spacing: 0;
+}
+
+.lede {
+  font-size: clamp(14px, 1.3vw, 16px);
+  color: var(--color-ink);
+  opacity: 0.7;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+
+/* ── Grid ── */
+.grid {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(8px, 1.5vw, 16px);
+}
+
+@media (min-width: 720px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── Tile ── */
+.tile {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  overflow: hidden;
+  text-decoration: none;
+  background: linear-gradient(160deg, var(--color-cobalt) 0%, #0F1654 100%);
+  box-shadow: 0 12px 28px rgba(30, 42, 140, 0.12);
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 600ms var(--ease-out-expo),
+    transform 600ms var(--ease-out-expo);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+.ig.is-visible .tile {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tile-media {
+  position: absolute;
+  inset: 0;
+}
+
+.tile-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--dur-component) var(--ease-out-expo);
+}
+
+.tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-offwhite);
+  background: rgba(10, 10, 20, 0);
+  opacity: 0;
+  transition: background var(--dur-component) var(--ease-out-expo),
+              opacity var(--dur-component) var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .tile:hover .tile-svg {
+    transform: scale(1.05);
+  }
+  .tile:hover .tile-overlay {
+    background: rgba(10, 10, 20, 0.35);
+    opacity: 1;
+  }
+}
+
+/* ── Follow CTA ── */
+.follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: clamp(28px, 4vw, 40px) auto 0;
+  padding: 14px 28px;
+  border: 1px solid var(--color-cobalt);
+  color: var(--color-cobalt);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: background var(--dur-component) var(--ease-out-expo),
+              color var(--dur-component) var(--ease-out-expo),
+              gap var(--dur-component) var(--ease-out-expo);
+}
+
+.follow {
+  display: flex;
+  width: fit-content;
+}
+
+.follow:hover {
+  background: var(--color-cobalt);
+  color: var(--color-offwhite);
+  gap: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

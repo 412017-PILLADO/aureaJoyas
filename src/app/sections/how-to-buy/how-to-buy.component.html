@@ -1,0 +1,18 @@
+<section class="how" aria-labelledby="how-title" scrollReveal>
+
+  <header class="header">
+    <p class="eyebrow font-ui">EN 4 PASOS</p>
+    <h2 id="how-title" class="title font-display">Cómo comprar</h2>
+  </header>
+
+  <div class="grid">
+    @for (step of steps; track step.n; let i = $index) {
+      <article class="step" [style.--i]="i">
+        <span class="step-number font-display">{{ step.n }}</span>
+        <h3 class="step-title font-ui">{{ step.title.toUpperCase() }}</h3>
+        <p class="step-desc font-ui">{{ step.desc }}</p>
+      </article>
+    }
+  </div>
+
+</section>
