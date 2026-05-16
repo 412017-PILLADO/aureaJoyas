@@ -172,21 +172,31 @@
 
 /* ── Store CTA ── */
 .store-cta {
-  display: flex;
-  width: fit-content;
+  display: inline-flex;
+  width: auto;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin: clamp(28px, 4vw, 40px) auto 0;
-  padding: 14px 28px;
+  gap: 8px;
+  margin: clamp(24px, 4vw, 40px) auto 0;
+  padding: 11px 20px;
   background: var(--color-cobalt);
   color: var(--color-offwhite);
-  font-size: 11px;
-  letter-spacing: 0.24em;
+  font-size: 10px;
+  letter-spacing: 0.16em;
   text-decoration: none;
   border-radius: 999px;
+  white-space: nowrap;
   transition: background var(--dur-component) var(--ease-out-expo),
               gap var(--dur-component) var(--ease-out-expo);
+}
+
+@media (min-width: 600px) {
+  .store-cta {
+    padding: 14px 28px;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    gap: 10px;
+  }
 }
 
 .store-cta:hover {

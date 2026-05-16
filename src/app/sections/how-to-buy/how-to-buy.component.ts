@@ -18,6 +18,6 @@ export class HowToBuyComponent {
     { n: '01', title: 'Explorá',     desc: 'Recorré nuestra selección curada. Cada pieza es única y rotamos el catálogo seguido.' },
     { n: '02', title: 'Consultá',    desc: 'Escribinos por WhatsApp o Instagram con la pieza que te enamoró. Te respondemos al toque.' },
     { n: '03', title: 'Coordinamos', desc: 'Te pasamos disponibilidad, precio y formas de pago. Acordamos juntos cómo recibirla.' },
-    { n: '04', title: 'Recibí',      desc: 'Encuentro en CABA, retiro o envío a coordinar. Empaque listo para regalar.' },
+    { n: '04', title: 'Recibí',      desc: 'Encuentro en Córdoba, retiro o envío a coordinar. Empaque listo para regalar.' },
   ];
 }
