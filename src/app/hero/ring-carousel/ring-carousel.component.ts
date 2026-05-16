@@ -55,7 +55,8 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     const THREE = await import('three');
     const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
     const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
-    this.initScene(THREE, GLTFLoader, DRACOLoader);
+    const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+    this.initScene(THREE, GLTFLoader, DRACOLoader, RoomEnvironment);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -77,16 +78,24 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     clearTimeout(this.resumeTimer);
   }
 
-  private initScene(THREE: any, GLTFLoader: any, DRACOLoader: any) {
+  private initScene(THREE: any, GLTFLoader: any, DRACOLoader: any, RoomEnvironment: any) {
     const canvas = this.canvasRef.nativeElement;
 
     this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
     this.camera.position.set(0, 0, 4.8);
+
+    // Environment map: makes the metal rings actually reflect light like jewelry
+    const pmremGen = new THREE.PMREMGenerator(this.renderer);
+    const roomEnv = new RoomEnvironment();
+    this.scene.environment = pmremGen.fromScene(roomEnv, 0.04).texture;
+    pmremGen.dispose();
 
     this.setupLighting(THREE);
 
@@ -128,16 +137,17 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
   }
 
   private setupLighting(THREE: any) {
-    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-    const key = new THREE.DirectionalLight(0xfff4d6, 2.8);
+    // Env map provides ambient + reflections; directional lights add accents
+    this.scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+    const key = new THREE.DirectionalLight(0xfff4d6, 1.6);
     key.position.set(3, 5, 6); this.scene.add(key);
-    const fill = new THREE.DirectionalLight(0xc4dafc, 1.4);
+    const fill = new THREE.DirectionalLight(0xc4dafc, 0.7);
     fill.position.set(-5, -1, 3); this.scene.add(fill);
-    const rim = new THREE.DirectionalLight(0xffffff, 2.0);
+    const rim = new THREE.DirectionalLight(0xffffff, 1.0);
     rim.position.set(-2, 4, -5); this.scene.add(rim);
-    const bottom = new THREE.DirectionalLight(0xfff0d0, 1.0);
+    const bottom = new THREE.DirectionalLight(0xfff0d0, 0.5);
     bottom.position.set(0, -4, 2); this.scene.add(bottom);
-    const side = new THREE.DirectionalLight(0xffffff, 1.4);
+    const side = new THREE.DirectionalLight(0xffffff, 0.8);
     side.position.set(6, 0, 1); this.scene.add(side);
   }
 

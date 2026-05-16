@@ -114,8 +114,9 @@
   transform: translateY(-50%);
   height: 100%;
   width: auto;
-  max-width: none;
+  max-width: 78%;
   object-fit: contain;
+  object-position: left center;
   display: block;
   z-index: 1;
   pointer-events: none;

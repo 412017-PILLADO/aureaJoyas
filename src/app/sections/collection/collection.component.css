@@ -172,8 +172,8 @@
 
 /* ── Store CTA ── */
 .store-cta {
-  display: inline-flex;
-  width: auto;
+  display: flex;
+  width: fit-content;
   align-items: center;
   justify-content: center;
   gap: 8px;
