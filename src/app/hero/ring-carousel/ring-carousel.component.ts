@@ -217,7 +217,7 @@ diffuseColor.a *= material.transmissionAlpha;
 #endif
 
 if (!gl_FrontFacing) {
-  outgoingLight *= 0.45;
+  outgoingLight *= 0.22;
 }
 
 gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,

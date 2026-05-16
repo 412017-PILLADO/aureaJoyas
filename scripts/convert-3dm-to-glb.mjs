@@ -151,33 +151,52 @@ if (allPositions.length === 0) {
   process.exit(2);
 }
 
-// ── Weld coincident vertices ─────────────────────────────────────────────
-// Rhino tessellates per Brep face, leaving duplicate vertices at shared
-// edges with independent normals. Welding them averages the normals,
-// removing the visible "seams" between faces and giving a smooth read.
+// ── Weld coincident vertices by angle threshold ─────────────────────────
+// Rhino tessellates per Brep face. Same-position vertices may belong to
+// DIFFERENT features (e.g., the flat band vs an engraved sun on top).
+// We only weld if the source normals point in similar directions (≤30°),
+// so smooth surfaces stay smooth but feature boundaries keep their crease.
 {
-  const SCALE = 1 / 0.0001; // resolution: 0.0001 units
-  const keyMap = new Map();
+  const ANGLE_THRESHOLD_DEG = 30;
+  const COS_T = Math.cos((ANGLE_THRESHOLD_DEG * Math.PI) / 180);
+  const SCALE = 1 / 0.0001;
+  const keyMap = new Map(); // key -> array of {idx, nx, ny, nz}
   const remap = new Int32Array(allPositions.length / 3);
   const newPositions = [];
-  const normalSum = []; // [x,y,z] per canonical
+  const normalSum = [];
   const normalCount = [];
 
   for (let i = 0, j = 0; i < allPositions.length; i += 3, j++) {
     const x = allPositions[i], y = allPositions[i + 1], z = allPositions[i + 2];
+    const nx = allNormals[i], ny = allNormals[i + 1], nz = allNormals[i + 2];
     const k = `${Math.round(x * SCALE)},${Math.round(y * SCALE)},${Math.round(z * SCALE)}`;
-    let canonical = keyMap.get(k);
-    if (canonical === undefined) {
+
+    let group = keyMap.get(k);
+    let canonical = -1;
+    if (group) {
+      for (const cand of group) {
+        if (cand.nx * nx + cand.ny * ny + cand.nz * nz > COS_T) {
+          canonical = cand.idx;
+          break;
+        }
+      }
+    } else {
+      group = [];
+      keyMap.set(k, group);
+    }
+
+    if (canonical === -1) {
       canonical = newPositions.length / 3;
-      keyMap.set(k, canonical);
       newPositions.push(x, y, z);
       normalSum.push(0, 0, 0);
       normalCount.push(0);
+      group.push({ idx: canonical, nx, ny, nz });
     }
+
     remap[j] = canonical;
-    normalSum[canonical * 3]     += allNormals[i];
-    normalSum[canonical * 3 + 1] += allNormals[i + 1];
-    normalSum[canonical * 3 + 2] += allNormals[i + 2];
+    normalSum[canonical * 3]     += nx;
+    normalSum[canonical * 3 + 1] += ny;
+    normalSum[canonical * 3 + 2] += nz;
     normalCount[canonical]++;
   }
 
@@ -188,16 +207,15 @@ if (allPositions.length === 0) {
 
   const newNormals = new Float32Array(newPositions.length);
   for (let v = 0; v < normalCount.length; v++) {
-    const nx = normalSum[v * 3];
-    const ny = normalSum[v * 3 + 1];
-    const nz = normalSum[v * 3 + 2];
-    const len = Math.hypot(nx, ny, nz) || 1;
-    newNormals[v * 3]     = nx / len;
-    newNormals[v * 3 + 1] = ny / len;
-    newNormals[v * 3 + 2] = nz / len;
+    const sx = normalSum[v * 3];
+    const sy = normalSum[v * 3 + 1];
+    const sz = normalSum[v * 3 + 2];
+    const len = Math.hypot(sx, sy, sz) || 1;
+    newNormals[v * 3]     = sx / len;
+    newNormals[v * 3 + 1] = sy / len;
+    newNormals[v * 3 + 2] = sz / len;
   }
 
-  // Replace contents without spread (spread overflows on large arrays)
   allPositions.length = 0;
   for (let i = 0; i < newPositions.length; i++) allPositions.push(newPositions[i]);
   allIndices.length = 0;
