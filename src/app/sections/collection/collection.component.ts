@@ -30,12 +30,54 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
   // Si dejás productUrl vacío, la card linkea a la home de la tienda.
   // Si dejás imageUrl vacío, se muestra el placeholder SVG con la variante numérica.
   readonly pieces: Piece[] = [
-    { id: 'mar-de-oro',    name: 'Mar de Oro',    category: 'Anillo',  variant: 1, productUrl: '', imageUrl: '' },
-    { id: 'lluvia-de-sal', name: 'Lluvia de Sal', category: 'Collar',  variant: 2, productUrl: '', imageUrl: '' },
-    { id: 'orbita',        name: 'Órbita',        category: 'Aro',     variant: 3, productUrl: '', imageUrl: '' },
-    { id: 'duna',          name: 'Duna',          category: 'Anillo',  variant: 4, productUrl: '', imageUrl: '' },
-    { id: 'noche-clara',   name: 'Noche Clara',   category: 'Collar',  variant: 5, productUrl: '', imageUrl: '' },
-    { id: 'eco',           name: 'Eco',           category: 'Pulsera', variant: 6, productUrl: '', imageUrl: '' },
+    {
+      id: 'anillo-gota-simple',
+      name: 'Anillo Gota Simple',
+      category: 'Anillo',
+      variant: 1,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/anillo-gota-simple/',
+      imageUrl: '/anilloGotaSimple.png',
+    },
+    {
+      id: 'anillo-abstracto-gold',
+      name: 'Anillo Abstracto Gold',
+      category: 'Anillo',
+      variant: 4,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/anillo-abstracto-gold/',
+      imageUrl: '/anilloAbstractoGold.png',
+    },
+    {
+      id: 'aros-isla-bonita',
+      name: 'Aros Isla Bonita',
+      category: 'Aros',
+      variant: 3,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/aros-isla-bonita/',
+      imageUrl: '/arosIslaBonita.png',
+    },
+    {
+      id: 'aros-six-mini',
+      name: 'Aros Six Mini',
+      category: 'Aros',
+      variant: 3,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/aros-six-mini/',
+      imageUrl: '/arosSixMini.png',
+    },
+    {
+      id: 'esclava-dorada',
+      name: 'Esclava Dorada',
+      category: 'Pulsera',
+      variant: 6,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/esclava-dorada/',
+      imageUrl: '/esclavaDorada.png',
+    },
+    {
+      id: 'aros-habana',
+      name: 'Aros Habana',
+      category: 'Aros',
+      variant: 3,
+      productUrl: 'https://aureaterra.mitiendanube.com/productos/aros-habana/',
+      imageUrl: '/arosHabana.png',
+    },
   ];
 
   readonly progress = signal(0);
