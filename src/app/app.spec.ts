@@ -47,16 +47,16 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders all sections including the global starfield', async () => {
+  it('renders all sections including the global loader and starfield', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.loader')).not.toBeNull();
     expect(el.querySelector('.starfield')).not.toBeNull();
     expect(el.querySelector('.hero')).not.toBeNull();
     expect(el.querySelector('.details')).not.toBeNull();
     expect(el.querySelector('.collection')).not.toBeNull();
-    expect(el.querySelector('.ig')).not.toBeNull();
     expect(el.querySelector('.how')).not.toBeNull();
     expect(el.querySelector('.contact')).not.toBeNull();
     expect(el.querySelector('.footer')).not.toBeNull();

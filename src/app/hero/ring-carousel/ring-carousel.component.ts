@@ -8,8 +8,10 @@ import {
   AfterViewInit,
   OnDestroy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  inject
 } from '@angular/core';
+import { LoadingService } from '../../shared/loading.service';
 
 const SPACING = 3.4;
 
@@ -29,6 +31,7 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
   ];
   @Output() ringChanged = new EventEmitter<number>();
 
+  private loadingService = inject(LoadingService);
   private animFrameId = 0;
   private scene: any;
   private camera: any;
@@ -161,6 +164,7 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
         group.add(fallbacks[i]());
       }
     }
+    this.loadingService.markRingsLoaded();
   }
 
   private loadGLTF(loader: any, path: string): Promise<any> {

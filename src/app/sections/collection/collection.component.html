@@ -4,7 +4,7 @@
     <p class="eyebrow font-ui">LA COLECCIÓN</p>
     <h2 id="collection-title" class="title font-display">Piezas seleccionadas</h2>
     <p class="lede font-ui">
-      Rotamos el catálogo cada semana. Estas son las que están enamorando ahora.
+      Rotamos el catálogo seguido. Estas son las que están enamorando ahora.
     </p>
   </header>
 
@@ -19,76 +19,81 @@
     (pointercancel)="onPointerUp($event)"
   >
     @for (piece of pieces; track piece.id; let i = $index) {
-      <article class="card" [style.--i]="i" [attr.data-variant]="piece.variant">
+      <a
+        class="card"
+        [href]="cardHref(piece)"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.aria-label]="'Ver ' + piece.name + ' en la tienda'"
+        [style.--i]="i"
+      >
         <div class="card-media" aria-hidden="true">
-          <svg viewBox="0 0 200 200" class="card-svg">
-            <defs>
-              <radialGradient [id]="'g-' + piece.id" cx="50%" cy="40%" r="70%">
-                <stop offset="0%" stop-color="rgba(223,184,116,0.35)" />
-                <stop offset="100%" stop-color="rgba(223,184,116,0)" />
-              </radialGradient>
-            </defs>
-            <rect width="200" height="200" [attr.fill]="'url(#g-' + piece.id + ')'" />
+          @if (piece.imageUrl) {
+            <img class="card-img" [src]="piece.imageUrl" [alt]="piece.name" loading="lazy" />
+          } @else {
+            <svg viewBox="0 0 200 200" class="card-svg">
+              <defs>
+                <radialGradient [id]="'g-' + piece.id" cx="50%" cy="40%" r="70%">
+                  <stop offset="0%" stop-color="rgba(223,184,116,0.35)" />
+                  <stop offset="100%" stop-color="rgba(223,184,116,0)" />
+                </radialGradient>
+              </defs>
+              <rect width="200" height="200" [attr.fill]="'url(#g-' + piece.id + ')'" />
 
-            @switch (piece.variant) {
-              @case (1) {
-                <g transform="translate(100 100)" stroke="#DFB874" stroke-width="1.6" fill="none">
-                  <ellipse rx="48" ry="22" />
-                  <ellipse rx="36" ry="16" opacity="0.7" />
-                </g>
+              @switch (piece.variant) {
+                @case (1) {
+                  <g transform="translate(100 100)" stroke="#DFB874" stroke-width="1.6" fill="none">
+                    <ellipse rx="48" ry="22" />
+                    <ellipse rx="36" ry="16" opacity="0.7" />
+                  </g>
+                }
+                @case (2) {
+                  <g stroke="#DFB874" stroke-width="1.4" fill="none">
+                    <path d="M40 60 Q100 30 160 60 L150 130 Q100 145 50 130 Z" opacity="0.85" />
+                    <circle cx="100" cy="155" r="6" fill="#DFB874" />
+                  </g>
+                }
+                @case (3) {
+                  <g transform="translate(100 100)" stroke="#DFB874" stroke-width="1.5" fill="none">
+                    <circle r="40" />
+                    <circle r="28" opacity="0.6" />
+                  </g>
+                }
+                @case (4) {
+                  <g stroke="#DFB874" stroke-width="1.4" fill="none" transform="translate(100 100)">
+                    <path d="M-50 10 Q0 -10 50 10 Q0 30 -50 10 Z" />
+                    <circle r="14" opacity="0.7" />
+                  </g>
+                }
+                @case (5) {
+                  <g stroke="#DFB874" stroke-width="1.3" fill="none">
+                    <path d="M30 70 Q100 50 170 70" />
+                    <path d="M30 70 Q60 130 100 140 Q140 130 170 70" />
+                    <text x="93" y="115" fill="#DFB874" font-size="18">✦</text>
+                  </g>
+                }
+                @default {
+                  <g stroke="#DFB874" stroke-width="1.4" fill="none" transform="translate(100 100)">
+                    <path d="M-60 0 Q-30 -22 0 0 Q30 22 60 0" />
+                    <path d="M-60 0 Q-30 22 0 0 Q30 -22 60 0" opacity="0.6" />
+                  </g>
+                }
               }
-              @case (2) {
-                <g stroke="#DFB874" stroke-width="1.4" fill="none">
-                  <path d="M40 60 Q100 30 160 60 L150 130 Q100 145 50 130 Z" opacity="0.85" />
-                  <circle cx="100" cy="155" r="6" fill="#DFB874" />
-                </g>
-              }
-              @case (3) {
-                <g transform="translate(100 100)" stroke="#DFB874" stroke-width="1.5" fill="none">
-                  <circle r="40" />
-                  <circle r="28" opacity="0.6" />
-                </g>
-              }
-              @case (4) {
-                <g stroke="#DFB874" stroke-width="1.4" fill="none" transform="translate(100 100)">
-                  <path d="M-50 10 Q0 -10 50 10 Q0 30 -50 10 Z" />
-                  <circle r="14" opacity="0.7" />
-                </g>
-              }
-              @case (5) {
-                <g stroke="#DFB874" stroke-width="1.3" fill="none">
-                  <path d="M30 70 Q100 50 170 70" />
-                  <path d="M30 70 Q60 130 100 140 Q140 130 170 70" />
-                  <text x="93" y="115" fill="#DFB874" font-size="18">✦</text>
-                </g>
-              }
-              @default {
-                <g stroke="#DFB874" stroke-width="1.4" fill="none" transform="translate(100 100)">
-                  <path d="M-60 0 Q-30 -22 0 0 Q30 22 60 0" />
-                  <path d="M-60 0 Q-30 22 0 0 Q30 -22 60 0" opacity="0.6" />
-                </g>
-              }
-            }
-          </svg>
+            </svg>
+          }
         </div>
 
         <div class="card-body">
           <p class="card-category font-ui">{{ piece.category.toUpperCase() }}</p>
           <h3 class="card-name font-display">{{ piece.name }}</h3>
-          <a
-            class="card-cta font-ui"
-            [href]="waLink(piece)"
-            target="_blank"
-            rel="noopener noreferrer"
-            [attr.aria-label]="'Consultar por ' + piece.name + ' en WhatsApp'"
-          >
-            <span>Consultar por WhatsApp</span>
+          <span class="card-cta font-ui">
+            <span>VER EN LA TIENDA</span>
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
               <path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-          </a>
+          </span>
         </div>
-      </article>
+      </a>
     }
   </div>
 

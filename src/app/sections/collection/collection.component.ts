@@ -6,10 +6,14 @@ interface Piece {
   name: string;
   category: string;
   variant: number;
+  /** Full TiendaNube product URL. Leave empty to fall back to the store home. */
+  productUrl?: string;
+  /** Direct image URL (TiendaNube CDN or any HTTPS URL). If empty, the procedural SVG is shown. */
+  imageUrl?: string;
 }
 
-const WHATSAPP_BASE = 'https://wa.me/5491100000000';
 const STORE_URL = 'https://aureaterra.mitiendanube.com';
+const DRAG_THRESHOLD_PX = 8;
 
 @Component({
   selector: 'app-collection',
@@ -22,13 +26,16 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
 
   readonly storeUrl = STORE_URL;
 
+  // Pegá acá las URLs reales de cada producto en TiendaNube + la URL de la foto principal.
+  // Si dejás productUrl vacío, la card linkea a la home de la tienda.
+  // Si dejás imageUrl vacío, se muestra el placeholder SVG con la variante numérica.
   readonly pieces: Piece[] = [
-    { id: 'mar-de-oro',    name: 'Mar de Oro',    category: 'Anillo',  variant: 1 },
-    { id: 'lluvia-de-sal', name: 'Lluvia de Sal', category: 'Collar',  variant: 2 },
-    { id: 'orbita',        name: 'Órbita',        category: 'Aro',     variant: 3 },
-    { id: 'duna',          name: 'Duna',          category: 'Anillo',  variant: 4 },
-    { id: 'noche-clara',   name: 'Noche Clara',   category: 'Collar',  variant: 5 },
-    { id: 'eco',           name: 'Eco',           category: 'Pulsera', variant: 6 },
+    { id: 'mar-de-oro',    name: 'Mar de Oro',    category: 'Anillo',  variant: 1, productUrl: '', imageUrl: '' },
+    { id: 'lluvia-de-sal', name: 'Lluvia de Sal', category: 'Collar',  variant: 2, productUrl: '', imageUrl: '' },
+    { id: 'orbita',        name: 'Órbita',        category: 'Aro',     variant: 3, productUrl: '', imageUrl: '' },
+    { id: 'duna',          name: 'Duna',          category: 'Anillo',  variant: 4, productUrl: '', imageUrl: '' },
+    { id: 'noche-clara',   name: 'Noche Clara',   category: 'Collar',  variant: 5, productUrl: '', imageUrl: '' },
+    { id: 'eco',           name: 'Eco',           category: 'Pulsera', variant: 6, productUrl: '', imageUrl: '' },
   ];
 
   readonly progress = signal(0);
@@ -37,6 +44,7 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
   private isDragging = false;
   private startX = 0;
   private startScrollLeft = 0;
+  private dragDistance = 0;
 
   ngAfterViewInit(): void {
     queueMicrotask(() => this.updateProgress());
@@ -45,11 +53,11 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     const track = this.trackRef?.nativeElement;
     if (!track) return;
-    track.removeEventListener('pointerdown', this.onPointerDown);
-    track.removeEventListener('pointermove', this.onPointerMove);
-    track.removeEventListener('pointerup', this.onPointerUp);
-    track.removeEventListener('pointercancel', this.onPointerUp);
     track.removeEventListener('scroll', this.updateProgress);
+  }
+
+  cardHref(piece: Piece): string {
+    return piece.productUrl || this.storeUrl;
   }
 
   onTrackScroll(): void {
@@ -62,7 +70,7 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
     this.isDragging = true;
     this.startX = e.clientX;
     this.startScrollLeft = track.scrollLeft;
-    track.setPointerCapture(e.pointerId);
+    this.dragDistance = 0;
     track.style.cursor = 'grabbing';
     track.style.scrollBehavior = 'auto';
   };
@@ -71,6 +79,7 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
     if (!this.isDragging) return;
     const track = this.trackRef.nativeElement;
     const dx = e.clientX - this.startX;
+    this.dragDistance = Math.max(this.dragDistance, Math.abs(dx));
     track.scrollLeft = this.startScrollLeft - dx;
   };
 
@@ -81,12 +90,17 @@ export class CollectionComponent implements AfterViewInit, OnDestroy {
     try { track.releasePointerCapture(e.pointerId); } catch {}
     track.style.cursor = '';
     track.style.scrollBehavior = '';
-  };
 
-  waLink(piece: Piece): string {
-    const msg = encodeURIComponent(`Hola, me interesa la pieza "${piece.name}".`);
-    return `${WHATSAPP_BASE}?text=${msg}`;
-  }
+    // Prevent the click that would otherwise fire on the card after a real drag
+    if (this.dragDistance > DRAG_THRESHOLD_PX) {
+      const blockClick = (ev: MouseEvent) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        track.removeEventListener('click', blockClick, true);
+      };
+      track.addEventListener('click', blockClick, true);
+    }
+  };
 
   private updateProgress = (): void => {
     const track = this.trackRef?.nativeElement;
