@@ -157,7 +157,7 @@ if (allPositions.length === 0) {
 // We only weld if the source normals point in similar directions (≤30°),
 // so smooth surfaces stay smooth but feature boundaries keep their crease.
 {
-  const ANGLE_THRESHOLD_DEG = 30;
+  const ANGLE_THRESHOLD_DEG = 50;
   const COS_T = Math.cos((ANGLE_THRESHOLD_DEG * Math.PI) / 180);
   const SCALE = 1 / 0.0001;
   const keyMap = new Map(); // key -> array of {idx, nx, ny, nz}

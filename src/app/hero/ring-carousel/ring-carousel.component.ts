@@ -192,19 +192,24 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     model.scale.setScalar(scale);
     model.position.copy(center).multiplyScalar(-scale);
 
-    // Jewelry-grade material override:
-    // - lower roughness for sharper highlights
-    // - boost env reflection
-    // - DoubleSide because Rhino-exported meshes occasionally have faces
-    //   whose normals point inward (GPU culling drops those → holes).
-    // - Shader injection darkens back-facing fragments so the inside of
-    //   the ring reads as a distinct surface vs the outer design.
+    // Jewelry-grade material override.
+    // Swap MeshStandardMaterial → MeshPhysicalMaterial so we get a
+    // clearcoat layer (the polished "glaze" on top of the gold). The
+    // clearcoat highlights are independent of the base roughness, so flat
+    // band areas get sharp specular streaks even when the body roughness
+    // is moderate — that's what gives a jewelry "wet" look.
     model.traverse((obj: any) => {
       if (!obj.isMesh || !obj.material) return;
-      const mat = obj.material;
-      mat.roughness = 0.15;
-      mat.envMapIntensity = 1.6;
-      mat.side = THREE.DoubleSide;
+      const old = obj.material;
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: old.color,
+        metalness: 1,
+        roughness: 0.18,
+        envMapIntensity: 1.8,
+        clearcoat: 0.45,
+        clearcoatRoughness: 0.06,
+        side: THREE.DoubleSide,
+      });
       mat.onBeforeCompile = (shader: any) => {
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <opaque_fragment>',
@@ -223,7 +228,8 @@ if (!gl_FrontFacing) {
 gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
         );
       };
-      mat.needsUpdate = true;
+      old.dispose?.();
+      obj.material = mat;
     });
 
     console.log('[Ring] size:', size, '| scale:', scale, '| pos:', model.position);
