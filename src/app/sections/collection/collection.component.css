@@ -164,3 +164,27 @@
   border-radius: 2px;
   transition: left 100ms linear;
 }
+
+/* ── Store CTA ── */
+.store-cta {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: clamp(28px, 4vw, 40px) auto 0;
+  padding: 14px 28px;
+  background: var(--color-cobalt);
+  color: var(--color-offwhite);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: background var(--dur-component) var(--ease-out-expo),
+              gap var(--dur-component) var(--ease-out-expo);
+}
+
+.store-cta:hover {
+  background: var(--color-ink);
+  gap: 14px;
+}

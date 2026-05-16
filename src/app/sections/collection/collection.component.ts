@@ -9,6 +9,7 @@ interface Piece {
 }
 
 const WHATSAPP_BASE = 'https://wa.me/5491100000000';
+const STORE_URL = 'https://aureaterra.mitiendanube.com';
 
 @Component({
   selector: 'app-collection',
@@ -18,6 +19,8 @@ const WHATSAPP_BASE = 'https://wa.me/5491100000000';
 })
 export class CollectionComponent implements AfterViewInit, OnDestroy {
   @ViewChild('track') trackRef!: ElementRef<HTMLElement>;
+
+  readonly storeUrl = STORE_URL;
 
   readonly pieces: Piece[] = [
     { id: 'mar-de-oro',    name: 'Mar de Oro',    category: 'Anillo',  variant: 1 },
