@@ -211,6 +211,40 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
         side: THREE.DoubleSide,
       });
       mat.onBeforeCompile = (shader: any) => {
+        // Pass world position from vertex to fragment for the procedural detail
+        shader.vertexShader = shader.vertexShader.replace(
+          '#include <common>',
+          `#include <common>
+varying vec3 vSurfWorldPos;`,
+        );
+        shader.vertexShader = shader.vertexShader.replace(
+          '#include <project_vertex>',
+          `#include <project_vertex>
+vSurfWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;`,
+        );
+
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <common>',
+          `#include <common>
+varying vec3 vSurfWorldPos;`,
+        );
+
+        // Subtle procedural normal perturbation: breaks the flat env-map
+        // reflection into a worked-metal look without affecting the
+        // overall geometry. The sun keeps its own consistent pattern
+        // because its normals are different from the band's.
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <normal_fragment_maps>',
+          `#include <normal_fragment_maps>
+{
+  float _nx = sin(vSurfWorldPos.x * 28.0 + vSurfWorldPos.z * 33.0);
+  float _ny = cos(vSurfWorldPos.y * 30.0 + vSurfWorldPos.x * 24.0);
+  float _nz = sin(vSurfWorldPos.z * 26.0 - vSurfWorldPos.y * 22.0);
+  vec3 _bump = vec3(_nx, _ny, _nz) * 0.045;
+  normal = normalize(normal + _bump);
+}`,
+        );
+
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <opaque_fragment>',
           `#ifdef OPAQUE
@@ -222,7 +256,7 @@ diffuseColor.a *= material.transmissionAlpha;
 #endif
 
 if (!gl_FrontFacing) {
-  outgoingLight *= 0.22;
+  outgoingLight *= 0.55;
 }
 
 gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
