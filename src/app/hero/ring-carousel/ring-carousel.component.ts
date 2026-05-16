@@ -192,13 +192,17 @@ export class RingCarouselComponent implements AfterViewInit, OnDestroy, OnChange
     model.scale.setScalar(scale);
     model.position.copy(center).multiplyScalar(-scale);
 
-    // Jewelry-grade material override: lower roughness for sharper highlights
-    // and boost env reflection. The GLB ships with roughness 0.22, which is
-    // OK for a hand-held model but too matte for a hero close-up.
+    // Jewelry-grade material override:
+    // - lower roughness for sharper highlights
+    // - boost env reflection
+    // - DoubleSide because Rhino-exported meshes occasionally have faces
+    //   whose normals point inward, which GPU backface culling drops →
+    //   visible holes / "transparent back" of the ring.
     model.traverse((obj: any) => {
       if (obj.isMesh && obj.material) {
         obj.material.roughness = 0.15;
         obj.material.envMapIntensity = 1.6;
+        obj.material.side = THREE.DoubleSide;
         obj.material.needsUpdate = true;
       }
     });
